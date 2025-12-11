@@ -25,20 +25,21 @@ func main() {
 		os.Exit(1)
 	}
 
-	appDir := filepath.Dir(exePath)
-	companionScript := filepath.Join(appDir, "companion_app.py")
+	exeDir := filepath.Dir(exePath)
+	companionDir := filepath.Join(exeDir, "companion-app")
+	mainScript := filepath.Join(companionDir, "main.py")
 
 	// Check if companion app exists
-	if _, err := os.Stat(companionScript); os.IsNotExist(err) {
-		showError("Missing Files", fmt.Sprintf("companion_app.py not found in:\n%s", appDir))
+	if _, err := os.Stat(mainScript); os.IsNotExist(err) {
+		showError("Missing Files", fmt.Sprintf("companion-app/main.py not found in:\n%s", exeDir))
 		os.Exit(1)
 	}
 
 	// Launch Python app
-	log.Printf("Launching Forger Companion from: %s", companionScript)
+	log.Printf("Launching Forger Companion from: %s", mainScript)
 	
-	cmd := exec.Command(pythonExe, companionScript)
-	cmd.Dir = appDir
+	cmd := exec.Command(pythonExe, mainScript)
+	cmd.Dir = companionDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
