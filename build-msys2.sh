@@ -49,7 +49,7 @@ go mod tidy
 echo ""
 echo "[*] Building ForgerCompanion.exe..."
 echo "[*] This may take 2-5 minutes on first build..."
-go build -v -ldflags="-s -w -H windowsgui -extldflags=-static" -o ForgerCompanion.exe .
+go build -v -ldflags="-s -w -H windowsgui" -o ForgerCompanion.exe .
 
 if [ $? -eq 0 ]; then
     SIZE=$(du -h ForgerCompanion.exe | cut -f1)
@@ -61,7 +61,22 @@ if [ $? -eq 0 ]; then
     echo "  Output: ForgerCompanion.exe"
     echo "  Size: $SIZE"
     echo ""
-    echo "  Ready to distribute!"
+    echo "[*] Bundling required DLLs..."
+    
+    # Copy required DLLs
+    cp /mingw64/bin/libtesseract-5.dll .
+    cp /mingw64/bin/leptonica-1.dll .
+    cp /mingw64/bin/libgomp-1.dll .
+    cp /mingw64/bin/libgcc_s_seh-1.dll .
+    cp /mingw64/bin/libstdc++-6.dll .
+    cp /mingw64/bin/libwinpthread-1.dll .
+    
+    echo "[*] DLLs bundled!"
+    echo ""
+    echo "  Files ready to distribute:"
+    echo "  - ForgerCompanion.exe"
+    echo "  - *.dll files"
+    echo ""
     echo "=========================================="
 else
     echo ""
