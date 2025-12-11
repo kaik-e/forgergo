@@ -10,20 +10,31 @@ on:
 jobs:
   build-windows:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
     - uses: actions/checkout@v3
+    
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install: >-
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-tesseract-ocr
+          mingw-w64-x86_64-leptonica
+          mingw-w64-x86_64-pkg-config
     
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
-    
-    - name: Install Tesseract
-      run: |
-        choco install tesseract -y
         
     - name: Build
       run: |
+        export PKG_CONFIG_PATH="/mingw64/lib/pkgconfig"
+        export CGO_ENABLED=1
         go mod tidy
         go build -ldflags="-s -w -H windowsgui" -o ForgerCompanion.exe .
         
