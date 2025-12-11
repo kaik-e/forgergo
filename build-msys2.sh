@@ -49,7 +49,7 @@ go mod tidy
 echo ""
 echo "[*] Building ForgerCompanion.exe..."
 echo "[*] This may take 2-5 minutes on first build..."
-go build -v -ldflags="-s -w -H windowsgui" -o ForgerCompanion.exe .
+go build -v -ldflags="-s -w -H windowsgui -extldflags=-static" -o ForgerCompanion.exe .
 
 if [ $? -eq 0 ]; then
     SIZE=$(du -h ForgerCompanion.exe | cut -f1)
