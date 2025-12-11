@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Install Tesseract
+      run: |
+        choco install tesseract -y
+        
+    - name: Build
+      run: |
+        go mod tidy
+        go build -ldflags="-s -w -H windowsgui" -o ForgerCompanion.exe .
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ForgerCompanion-Windows
+        path: ForgerCompanion.exe
+        
+    - name: Get file size
+      run: |
+        $size = (Get-Item ForgerCompanion.exe).length / 1MB
+        Write-Output "Build size: $size MB"
