@@ -5,7 +5,6 @@ import (
 	"forger-companion/internal/config"
 	"forger-companion/internal/macro"
 	"forger-companion/internal/ocr"
-	"log"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -48,7 +47,7 @@ func (a *SimpleApp) Run() {
 	
 	// Status
 	a.statusLabel = widget.NewLabel("Ready")
-	a.statusLabel.Wrapping = true
+	a.statusLabel.Wrapping = fyne.TextWrapWord
 	
 	// Buttons
 	a.scanButton = widget.NewButton("Start Scan", a.toggleScan)
@@ -61,7 +60,7 @@ func (a *SimpleApp) Run() {
 		"Scan: Detect ores in selected region\n" +
 		"Webhook: Send progress updates",
 	)
-	infoLabel.Wrapping = true
+	infoLabel.Wrapping = fyne.TextWrapWord
 	
 	// Layout
 	content := container.NewVBox(
