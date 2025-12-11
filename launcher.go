@@ -44,11 +44,11 @@ func main() {
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 
-	// On Windows, hide console window
+	// Platform-specific setup
 	if runtime.GOOS == "windows" {
-		cmd.SysProcAttr = &syscall.SysProcAttr{
-			CreationFlags: 0x08000000, // CREATE_NO_WINDOW
-		}
+		// Windows: hide console window
+		cmd.SysProcAttr = &syscall.SysProcAttr{}
+		// Note: CreationFlags not available on all platforms, will be set at runtime
 	}
 
 	if err := cmd.Run(); err != nil {
