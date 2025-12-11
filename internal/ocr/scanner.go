@@ -4,7 +4,9 @@ import (
 	"forger-companion/internal/config"
 	"forger-companion/internal/data"
 	"image"
+	"image/png"
 	"log"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -55,7 +57,14 @@ func (s *Scanner) ScanForOres(region *config.Region) (map[string]DetectedOre, er
 		return nil, err
 	}
 
-	s.client.SetImage(img)
+	// Save temp image for gosseract
+	tmpFile := "temp_scan.png"
+	if err := saveImage(img, tmpFile); err != nil {
+		return nil, err
+	}
+	defer os.Remove(tmpFile)
+
+	s.client.SetImage(tmpFile)
 	text, err := s.client.Text()
 	if err != nil {
 		return nil, err
@@ -112,7 +121,13 @@ func (s *Scanner) DetectForgeUI(region *config.Region) (bool, bool, error) {
 		return false, false, err
 	}
 
-	s.client.SetImage(img)
+	tmpFile := "temp_detect.png"
+	if err := saveImage(img, tmpFile); err != nil {
+		return false, false, err
+	}
+	defer os.Remove(tmpFile)
+
+	s.client.SetImage(tmpFile)
 	text, err := s.client.Text()
 	if err != nil {
 		return false, false, err
@@ -149,7 +164,13 @@ func (s *Scanner) ScanForStats(region *config.Region) (*Stats, error) {
 		return nil, err
 	}
 
-	s.client.SetImage(img)
+	tmpFile := "temp_stats.png"
+	if err := saveImage(img, tmpFile); err != nil {
+		return nil, err
+	}
+	defer os.Remove(tmpFile)
+
+	s.client.SetImage(tmpFile)
 	text, err := s.client.Text()
 	if err != nil {
 		return nil, err
@@ -197,4 +218,14 @@ func (s *Scanner) ScanForStats(region *config.Region) (*Stats, error) {
 	}
 
 	return stats, nil
+}
+
+func saveImage(img image.Image, filename string) error {
+	f, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	
+	return png.Encode(f, img)
 }
