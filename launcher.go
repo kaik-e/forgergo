@@ -47,7 +47,7 @@ func main() {
 	// On Windows, hide console window
 	if runtime.GOOS == "windows" {
 		cmd.SysProcAttr = &syscall.SysProcAttr{
-			HideWindow: true,
+			CreationFlags: 0x08000000, // CREATE_NO_WINDOW
 		}
 	}
 
