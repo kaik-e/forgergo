@@ -15,6 +15,6 @@ func main() {
 	}
 
 	// Create and run app
-	application := app.New(cfg)
+	application := app.NewSimple(cfg)
 	application.Run()
 }
