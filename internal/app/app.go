@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"forger-companion/internal/calculator"
 	"forger-companion/internal/config"
+	"forger-companion/internal/macro"
 	"forger-companion/internal/ocr"
 	"log"
 	"time"
@@ -17,6 +18,7 @@ import (
 type App struct {
 	cfg     *config.Config
 	scanner *ocr.Scanner
+	macro   *macro.Macro
 	window  fyne.Window
 	
 	// UI elements
@@ -24,6 +26,7 @@ type App struct {
 	oresLabel       *widget.Label
 	statusLabel     *widget.Label
 	scanButton      *widget.Button
+	macroButton     *widget.Button
 	
 	// State
 	scanning bool
@@ -31,9 +34,11 @@ type App struct {
 }
 
 func New(cfg *config.Config) *App {
+	scanner := ocr.NewScanner()
 	return &App{
 		cfg:      cfg,
-		scanner:  ocr.NewScanner(),
+		scanner:  scanner,
+		macro:    macro.New(cfg, scanner),
 		stopChan: make(chan bool),
 	}
 }
@@ -73,29 +78,47 @@ func (a *App) buildUI() {
 	// Buttons
 	regionButton := widget.NewButton("Select Region", a.selectRegion)
 	a.scanButton = widget.NewButton("Start Scan", a.toggleScan)
+	a.macroButton = widget.NewButton("Start Macro", a.toggleMacro)
+	
+	// Tabs
+	tabs := container.NewAppTabs(
+		container.NewTabItem("Calculator", container.NewVBox(
+			a.multiplierLabel,
+			widget.NewSeparator(),
+			a.oresLabel,
+			widget.NewSeparator(),
+			container.NewGridWithColumns(2,
+				regionButton,
+				a.scanButton,
+			),
+		)),
+		container.NewTabItem("Macro", container.NewVBox(
+			widget.NewLabel("Macro Settings"),
+			widget.NewLabel("Configure macro buttons in settings"),
+			widget.NewSeparator(),
+			a.macroButton,
+		)),
+	)
 	
 	// Layout
 	content := container.NewVBox(
 		title,
 		widget.NewSeparator(),
-		a.multiplierLabel,
-		widget.NewSeparator(),
-		a.oresLabel,
-		widget.NewSeparator(),
 		a.statusLabel,
 		widget.NewSeparator(),
-		container.NewGridWithColumns(2,
-			regionButton,
-			a.scanButton,
-		),
+		tabs,
 	)
 	
 	a.window.SetContent(content)
 }
 
 func (a *App) selectRegion() {
-	a.statusLabel.SetText("Region selection not yet implemented")
-	// TODO: Implement region selection
+	selector := NewRegionSelector(a, func(region *config.Region) {
+		a.cfg.Regions["ores_panel"] = region
+		a.cfg.Save()
+		a.statusLabel.SetText("Region saved!")
+	})
+	selector.Show()
 }
 
 func (a *App) toggleScan() {
@@ -103,6 +126,21 @@ func (a *App) toggleScan() {
 		a.stopScan()
 	} else {
 		a.startScan()
+	}
+}
+
+func (a *App) toggleMacro() {
+	if a.macro.IsRunning() {
+		a.macro.Stop()
+		a.macroButton.SetText("Start Macro")
+		a.statusLabel.SetText("Macro stopped")
+	} else {
+		if err := a.macro.Start(); err != nil {
+			a.statusLabel.SetText(fmt.Sprintf("Macro error: %v", err))
+			return
+		}
+		a.macroButton.SetText("Stop Macro")
+		a.statusLabel.SetText("Macro running...")
 	}
 }
 

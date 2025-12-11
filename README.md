@@ -8,9 +8,11 @@ Lightweight Go rewrite of Forger Companion - **~15-30MB** vs 311MB Python versio
 - ✅ Real-time multiplier calculation
 - ✅ Auto-scanning with configurable intervals
 - ✅ Forge UI detection
-- 🚧 Macro functionality (in progress)
-- 🚧 Webhook progress updates (in progress)
-- 🚧 Stats tracking (in progress)
+- ✅ Macro functionality (auto-mining & selling)
+- ✅ Webhook progress updates (Discord webhooks & bot DMs)
+- ✅ Stats tracking (legendary ores, level, money)
+- ✅ Region selection
+- ✅ Tabbed UI (Calculator & Macro)
 
 ## Requirements
 
@@ -80,12 +82,34 @@ forger-companion-go/
 └── go.mod
 ```
 
+## Configuration
+
+Config stored in `~/.forger-companion/settings.json`
+
+Example:
+```json
+{
+  "regions": {
+    "ores_panel": {"x": 100, "y": 100, "width": 400, "height": 600}
+  },
+  "macro_buttons": {
+    "break_position": {"x": 500, "y": 500},
+    "inventory": {"key": "e"},
+    "sell_tab": {"x": 300, "y": 200}
+  },
+  "webhook": {
+    "enabled": true,
+    "mode": "webhook",
+    "webhook_url": "https://discord.com/api/webhooks/...",
+    "cycle_interval": 5,
+    "track_stats": true
+  }
+}
+```
+
 ## TODO
 
-- [ ] Region selection UI
-- [ ] Macro functionality
-- [ ] Webhook support
-- [ ] Stats tracking
-- [ ] Setup wizard
-- [ ] Hotkey support
+- [ ] Hotkey support (F6 to toggle macro)
 - [ ] System tray icon
+- [ ] Auto-updater
+- [ ] Better region selection UI
