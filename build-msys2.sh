@@ -63,15 +63,20 @@ if [ $? -eq 0 ]; then
     echo ""
     echo "[*] Bundling required DLLs..."
     
-    # Copy required DLLs
-    cp /mingw64/bin/libtesseract-5.dll .
-    cp /mingw64/bin/leptonica-1.dll .
-    cp /mingw64/bin/libgomp-1.dll .
-    cp /mingw64/bin/libgcc_s_seh-1.dll .
-    cp /mingw64/bin/libstdc++-6.dll .
-    cp /mingw64/bin/libwinpthread-1.dll .
+    # Copy required DLLs (find them dynamically)
+    cp /mingw64/bin/libtesseract*.dll . 2>/dev/null || true
+    cp /mingw64/bin/leptonica*.dll . 2>/dev/null || true
+    cp /mingw64/bin/libgomp*.dll . 2>/dev/null || true
+    cp /mingw64/bin/libgcc*.dll . 2>/dev/null || true
+    cp /mingw64/bin/libstdc++*.dll . 2>/dev/null || true
+    cp /mingw64/bin/libwinpthread*.dll . 2>/dev/null || true
+    cp /mingw64/bin/libpng*.dll . 2>/dev/null || true
+    cp /mingw64/bin/libjpeg*.dll . 2>/dev/null || true
+    cp /mingw64/bin/libwebp*.dll . 2>/dev/null || true
+    cp /mingw64/bin/zlib*.dll . 2>/dev/null || true
     
     echo "[*] DLLs bundled!"
+    ls -lh *.dll 2>/dev/null | wc -l | xargs echo "[*] Total DLLs:"
     echo ""
     echo "  Files ready to distribute:"
     echo "  - ForgerCompanion.exe"
