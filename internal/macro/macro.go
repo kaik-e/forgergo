@@ -58,7 +58,7 @@ func (m *Macro) Stop() {
 func (m *Macro) run() {
 	defer func() {
 		m.running = false
-		robotgo.MouseToggle("up")
+		robotgo.Toggle("left", "up")
 	}()
 
 	cycle := 1
@@ -80,7 +80,7 @@ func (m *Macro) run() {
 		if breakPos != nil && breakPos.X != nil && breakPos.Y != nil {
 			log.Println("[Macro] Moving to break position and holding M1...")
 			robotgo.Move(*breakPos.X, *breakPos.Y)
-			robotgo.MouseToggle("down")
+			robotgo.Toggle("left", "down")
 
 			// Hold for duration
 			select {
@@ -89,7 +89,7 @@ func (m *Macro) run() {
 				return
 			}
 
-			robotgo.MouseToggle("up")
+			robotgo.Toggle("left", "up")
 			time.Sleep(500 * time.Millisecond)
 		}
 
