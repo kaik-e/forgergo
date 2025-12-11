@@ -29,8 +29,6 @@ func NewRegionSelector(app *App, callback func(*config.Region)) *RegionSelector 
 }
 
 func (rs *RegionSelector) Show() {
-	rs.window = rs.app.window.Driver().AllWindows()[0].Canvas().Overlays()
-	
 	dialog := widget.NewModalPopUp(
 		container.NewVBox(
 			widget.NewLabel("Region Selection"),

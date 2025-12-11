@@ -51,9 +51,6 @@ func (a *App) Run() {
 	
 	// Set window properties
 	a.window.Resize(fyne.NewSize(400, 300))
-	if alwaysOnTop, ok := a.cfg.Preferences["always_on_top"].(bool); ok && alwaysOnTop {
-		a.window.SetOnTop(true)
-	}
 	
 	a.window.ShowAndRun()
 	
